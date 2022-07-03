@@ -1,10 +1,12 @@
 package com.example.firstless
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -42,6 +44,9 @@ class MainActivity : ComponentActivity() {
                         .offset(20.dp, 20.dp)
                         .border(5.dp, Color.Red)
                         .padding(5.dp)
+                        .clickable {
+                            Toast.makeText(this@MainActivity,"click",Toast.LENGTH_LONG).show()
+                        }
                 )
                 Spacer(modifier = Modifier.fillMaxHeight(0.2f))
                 Text(
