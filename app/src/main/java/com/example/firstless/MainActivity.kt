@@ -12,13 +12,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.firstless.ui.theme.FirstLessTheme
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -43,56 +42,48 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            Column(modifier = Modifier.fillMaxSize()) {
-
-                val state = remember {
-                    mutableStateOf(Color.Yellow)
-                }
-                ChangeBackground(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(state.value)
-                        .fillMaxSize()
-                ){
-                    state.value = it
-                }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(state.value)
-                        .fillMaxSize()
-                ) {
-
-                }
-
+            val scaffoldState = rememberScaffoldState()
+            val textFieldState = remember{
+                mutableStateOf("")
             }
+            val score = rememberCoroutineScope()
+
+           Scaffold(
+               modifier = Modifier.fillMaxSize(),
+               scaffoldState = scaffoldState
+           ) {
+
+               Column(
+                   modifier = Modifier
+                       .fillMaxSize()
+                       .padding(horizontal = 30.dp),
+                   horizontalAlignment = Alignment.CenterHorizontally,
+                   verticalArrangement = Arrangement.Center
+               ) {
+                   TextField(
+                       value = textFieldState.value,
+                       label = {Text(text = "Enter your name")},
+                       onValueChange = {
+                           textFieldState.value = it
+                       },
+                       singleLine = true,
+                       modifier = Modifier.height(60.dp)
+                   )
+                   Spacer(modifier = Modifier.height(16.dp))
+                   Button(onClick = {
+                       score.launch {
+                           scaffoldState.snackbarHostState.showSnackbar("Hello ${textFieldState.value}")
+                       }
+                   }) {
+                        Text(text = "Enter!")
+                   }
+               }
+
+           }
 
         }
     }
 
-    @Composable
-    fun ChangeBackground(
-        modifier: Modifier = Modifier,
-        changeState: (Color) -> Unit
-    ){
-
-
-
-        Box(
-            modifier = modifier
-                .clickable {
-                    changeState(Color(
-                        Random.nextFloat(),
-                        Random.nextFloat(),
-                        Random.nextFloat(),
-                        1f
-                    ))
-                }
-        ){
-
-        }
-    }
 
 
 }
