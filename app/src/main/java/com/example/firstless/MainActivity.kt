@@ -11,6 +11,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -27,6 +29,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,44 +45,23 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val scaffoldState = rememberScaffoldState()
-            val textFieldState = remember{
-                mutableStateOf("")
+            LazyColumn(){
+                itemsIndexed(
+                    listOf("I","am","programmer")
+                ){index,string ->
+                    Text(
+                        text = string,
+                        style = TextStyle(
+                            color = Color.Black,
+                            fontSize = 20.sp
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)
+                    )
+                }
             }
-            val score = rememberCoroutineScope()
-
-           Scaffold(
-               modifier = Modifier.fillMaxSize(),
-               scaffoldState = scaffoldState
-           ) {
-
-               Column(
-                   modifier = Modifier
-                       .fillMaxSize()
-                       .padding(horizontal = 30.dp),
-                   horizontalAlignment = Alignment.CenterHorizontally,
-                   verticalArrangement = Arrangement.Center
-               ) {
-                   TextField(
-                       value = textFieldState.value,
-                       label = {Text(text = "Enter your name")},
-                       onValueChange = {
-                           textFieldState.value = it
-                       },
-                       singleLine = true,
-                       modifier = Modifier.height(60.dp)
-                   )
-                   Spacer(modifier = Modifier.height(16.dp))
-                   Button(onClick = {
-                       score.launch {
-                           scaffoldState.snackbarHostState.showSnackbar("Hello ${textFieldState.value}")
-                       }
-                   }) {
-                        Text(text = "Enter!")
-                   }
-               }
-
-           }
 
         }
     }
