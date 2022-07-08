@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.ColorRes
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,10 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -45,21 +45,45 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            LazyColumn(){
-                itemsIndexed(
-                    listOf("I","am","programmer")
-                ){index,string ->
-                    Text(
-                        text = string,
-                        style = TextStyle(
-                            color = Color.Black,
-                            fontSize = 20.sp
-                        ),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp)
-                    )
+            val sizeState = remember{
+                mutableStateOf(200.dp)
+            }
+
+            val size = animateDpAsState(
+                targetValue = sizeState.value,
+                tween(
+                    durationMillis = 3000,
+                    delayMillis = 300,  //  simple configuration animate
+                    easing = LinearOutSlowInEasing
+                )
+//                spring(
+//                    Spring.DampingRatioLowBouncy // animate with bouncy effect
+//                )
+
+            )
+
+            val infiniteTransition = rememberInfiniteTransition()
+
+            val color by infiniteTransition.animateColor(
+                initialValue = Color.Red,
+                targetValue = Color.Green,
+                animationSpec = infiniteRepeatable(
+                    tween(durationMillis = 2000),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+
+
+            Box(
+                modifier = Modifier
+                    .size(size.value)
+                    .background(color = color),
+                contentAlignment = Alignment.Center
+            ){
+                Button(onClick = {  sizeState.value += 50.dp }) {
+
+                    Text("click")
+
                 }
             }
 
